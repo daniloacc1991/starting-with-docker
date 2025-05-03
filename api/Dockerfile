@@ -1,0 +1,11 @@
+FROM node:22-alpine
+
+COPY [".", "/app"]
+
+WORKDIR /app
+
+RUN npm install --omit dev
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]

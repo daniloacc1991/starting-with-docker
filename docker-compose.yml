@@ -1,0 +1,61 @@
+services:
+  db16:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    container_name: postgres16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: POSTGRES
+      POSTGRES_DB: my_first_db
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    networks:
+      - docker_network
+  db17:
+    image: postgres:17-alpine
+    container_name: postgres17
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: POSTGRES
+      POSTGRES_DB: my_first_db
+    volumes:
+      - ./postgres_data17:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+    networks:
+      - docker_network
+
+  pgadmin:
+    image: dpage/pgadmin4:9
+    container_name: pgadmin4
+    restart: always
+    environment:
+      - TZ=America/Bogota
+      - PGADMIN_DEFAULT_EMAIL=danilo.cadena@allansolutions.com
+      - PGADMIN_DEFAULT_PASSWORD=POSTGRES
+      - PGADMIN_LISTEN_PORT=5050
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./pgadmin/data/servers.json:/pgadmin4/servers.json
+    networks:
+      - docker_network
+
+  app:
+    build: ./api
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_USER=postgres
+      - DB_HOST=postgres17
+      - DB_NAME=my_first_db
+      - DB_PASSWORD=POSTGRES
+      - DB_PORT=5432
+    networks:
+      - docker_network
+
+networks:
+  docker_network:
