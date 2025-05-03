@@ -24,7 +24,7 @@ pnpm-debug.log*
 .idea/
 
 
-postgres_
+postgres_*
 
 pgadmin/
 
